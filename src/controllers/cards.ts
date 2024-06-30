@@ -1,11 +1,12 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserRequest } from "../types";
 import Card from "../models/card";
+import { CARDS_NOT_FOUND_MESSAGE, INVALID_DATA_MESSAGE, SERVER_ERROR_MESSAGE, STATUS_BAD_REQUEST, STATUS_NOT_FOUND, STATUS_SERVER_ERROR } from "../utils/consts";
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => {
   Card.find({})
     .then((result) => (result.length ? res.send(result) : next({})))
-    .catch(() => next({ message: "Ощибка на стороне сервера", status: 500 }));
+    .catch(() => next({ message: SERVER_ERROR_MESSAGE, status: STATUS_SERVER_ERROR }));
 };
 
 export const createCard = ( req: IUserRequest, res: Response, next: NextFunction) => {
@@ -13,7 +14,7 @@ export const createCard = ( req: IUserRequest, res: Response, next: NextFunction
     .then((result) => res.send(result))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next({ message: "Переданы некорректные данные при создании карточки", status: 400 });
+        next({ message: INVALID_DATA_MESSAGE, status: STATUS_BAD_REQUEST });
       } else {
         next({});
       };
@@ -28,7 +29,7 @@ export const deleteCard = ( req: IUserRequest, res: Response, next: NextFunction
     .then((result) =>
       result
         ? res.send(result)
-        : next({ message: "Карточка с указанным идентификатором не найдена" })
+        : next({ message: CARDS_NOT_FOUND_MESSAGE })
     )
     .catch(() => next({}));
 };
@@ -42,7 +43,7 @@ export const putCardLike = ( req: IUserRequest, res: Response, next: NextFunctio
     .then((result) =>
       result
         ? res.send(result)
-        : next({ message: "Передан несуществующий идентификатор карточки.", status: 400 })
+        : next({ message: CARDS_NOT_FOUND_MESSAGE, status: STATUS_BAD_REQUEST })
     )
     .catch(() => next({}));
 };
@@ -55,6 +56,6 @@ export const removeCardLike = ( req: IUserRequest, res: Response, next: NextFunc
   ).then((result) =>
     result
       ? res.send(result)
-      : next({ message: "Карточка с указанным индетификатором не найдена", status: 404 })
+      : next({ message: CARDS_NOT_FOUND_MESSAGE, status: STATUS_NOT_FOUND })
   );
 };

@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import User from "../models/user";
 import { IUserRequest } from "../types";
+import { STATUS_BAD_REQUEST, STATUS_NOT_FOUND, USER_NOT_FOUND_MESSAGE, VALIDATION_ERROR_MESSAGE } from "../utils/consts";
 
 export const getUsers = ( req: Request, res: Response, next: NextFunction ) => {
   User.find({})
@@ -14,7 +15,7 @@ export const getUserById = ( req: Request, res: Response, next: NextFunction ) =
     .then((result) =>
       result
         ? res.send(result)
-        : next({ message: "Пользователь по указанному идентификатору не найден", status: 404 })
+        : next({ message: USER_NOT_FOUND_MESSAGE, status: STATUS_NOT_FOUND })
     )
     .catch(() => next({}));
 };
@@ -24,7 +25,7 @@ export const createUser = ( req: Request, res: Response, next: NextFunction ) =>
     .then((result) => res.send(result))
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next({ message: "Переданы некорректные данные при создании пользователя", status: 400 });
+        next({ message: VALIDATION_ERROR_MESSAGE, status: STATUS_BAD_REQUEST });
       } else {
         next({});
       };
@@ -42,11 +43,11 @@ export const updateUser = ( req: IUserRequest, res: Response, next: NextFunction
     .then((result) =>
       result
         ? res.send(result)
-        : next({ message: "Пользователь с указанным идентификатором не найден", status: 404 })
+        : next({ message: USER_NOT_FOUND_MESSAGE, status: STATUS_NOT_FOUND })
     )
     .catch((err) => {
       if (err.name === "CastError" || err.name === "ValidationError") {
-        next({ message: "Переданы некорректные данные при обновлении профиля", status: 400 });
+        next({ message: VALIDATION_ERROR_MESSAGE, status: STATUS_BAD_REQUEST });
       } else {
         next({});
       };
@@ -64,11 +65,11 @@ export const updateUserAvatar = ( req: IUserRequest, res: Response, next: NextFu
     .then((result) =>
       result
         ? res.send(result)
-        : next({ message: "Пользователь с указанным идентификатором не найден", status: 404 })
+        : next({ message: USER_NOT_FOUND_MESSAGE, status: STATUS_NOT_FOUND })
     )
     .catch((err) => {
       if (err.name === "ValidationError") {
-        next({ message: "Переданы некорректные данные при обновлении аватара", status: 400 });
+        next({ message: VALIDATION_ERROR_MESSAGE, status: STATUS_BAD_REQUEST });
       } else {
         next({});
       };
