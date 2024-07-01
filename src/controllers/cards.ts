@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { IUserRequest } from "../types";
 import Card from "../models/card";
-import { CARDS_NOT_FOUND_MESSAGE, INVALID_DATA_MESSAGE, SERVER_ERROR_MESSAGE, STATUS_BAD_REQUEST, STATUS_NOT_FOUND, STATUS_SERVER_ERROR } from "../utils/consts";
+import { SERVER_ERROR_MESSAGE, STATUS_SERVER_ERROR, INVALID_DATA_MESSAGE, STATUS_BAD_REQUEST, CARDS_NOT_FOUND_MESSAGE, STATUS_NOT_FOUND} from "../utils/consts";
 
 export const getCards = (req: Request, res: Response, next: NextFunction) => {
   Card.find({})
