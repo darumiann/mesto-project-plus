@@ -2,12 +2,12 @@ import { Router } from 'express';
 import { getCards, createCard, deleteCard, putCardLike, removeCardLike } from '../controllers/cards';
 import { createCardValidator, cardIdValidator } from '../utils/validator';
 
-const router = Router();
+const cardsRouter = Router();
 
-router.get("/", getCards);
-router.post("/", createCardValidator, createCard);
-router.delete("/:cardId", cardIdValidator, deleteCard);
-router.put("/:cardId/likes", cardIdValidator, putCardLike);
-router.delete("/:cardId/likes", cardIdValidator ,removeCardLike);
+cardsRouter.get("/", getCards);
+cardsRouter.post("/", createCardValidator, createCard);
+cardsRouter.delete("/:cardId", cardIdValidator, deleteCard);
+cardsRouter.put("/:cardId/likes", cardIdValidator, putCardLike);
+cardsRouter.delete("/:cardId/likes", cardIdValidator ,removeCardLike);
 
-export default router;
+export default cardsRouter;

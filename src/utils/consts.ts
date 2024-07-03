@@ -1,5 +1,4 @@
 export const STATUS_SUCCESS = 200;
-export const STATUS_CREATED = 201;
 export const STATUS_BAD_REQUEST = 400;
 export const STATUS_NOT_FOUND = 404;
 export const STATUS_FORBIDDEN = 403;
@@ -20,11 +19,11 @@ export const WRONG_EMAIL_PASSWORD_MESSAGE = 'Вы ввели неправиль�
 export const SUCCESS_MESSAGE = 'Это успех!';
 export const AUTHORIZATION_NEEDED_MESSAGE = 'Необходима авторизация';
 export const STATUS_FORBIDDEN_MESSAGE = 'У вас нет прав на эту операцию';
+export const ROUTER_NOT_FOUND_MESSAGE = 'Запрашиваемый ресурс не найден';
 export const USER_EXISTS_MESSAGE = 'Пользователь с такими данными уже существует';
 
 export const DEFAULT_USER_NAME = 'Жак-Ив Кусто';
 export const DEFAULT_ABOUT_VALUE = 'Исследователь';
 export const DEFAULT_AVATAR_LINK = 'https://pictures.s3.yandex.net/resources/jacques-cousteau_1604399756.png';
 
-export const avaRegex = /^https?:\/\/(?:www\.)?[a-zA-Z0-9-._~:/?#[\]@!$&'()*+,;=]+\.[a-zA-Z0-9()]{1,6}#?\b(?:[-a-zA-Z0-9()@:%_\+.~#?&\/=]*)$/;
 export const linkRegex = /^(https?:\/\/)?(www\.)?[\w\d\-._~:/?#[\]@!$&'()*+,;=]+#?$`/;

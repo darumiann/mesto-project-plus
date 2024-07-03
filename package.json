@@ -28,6 +28,8 @@
   },
   "dependencies": {
     "@types/node": "^20.13.0",
+    "@typescript-eslint/eslint-plugin": "^7.15.0",
+    "@typescript-eslint/parser": "^7.15.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
     "celebrate": "^15.0.3",

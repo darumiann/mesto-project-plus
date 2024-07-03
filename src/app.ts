@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction } from 'express';
 import mongoose from 'mongoose';
 import cookieParser from 'cookie-parser';
 import { errors } from 'celebrate';
@@ -9,7 +9,9 @@ import { errorLogger, requestLogger } from './middlewares/logger';
 import { createUserValidator, loginValidator } from './utils/validator';
 import { createUser, login } from './controllers/users';
 import auth from './middlewares/auth';
-import { STATUS_SERVER_ERROR, SERVER_ERROR_MESSAGE } from './utils/consts';
+import { ROUTER_NOT_FOUND_MESSAGE, STATUS_NOT_FOUND } from './utils/consts';
+import CustomError from './errors/customError';
+import errorHandler from './errors/errorHandler';
 
 const app = express();
 
@@ -30,13 +32,14 @@ app.use(auth);
 app.use("/users", usersRouter);
 app.use("/cards", cardsRouter);
 
-// app.all('*', () => {
-//   throw({ message: STATUS_SERVER_ERROR , status: SERVER_ERROR_MESSAGE })
-// })
+app.all('*', (req, res, next) => {
+   next(new CustomError(STATUS_NOT_FOUND, ROUTER_NOT_FOUND_MESSAGE))
+});
 
 app.use(errors());
 app.use(errorLogger);
+app.use(errorHandler);
 
 app.listen(PORT, () => {
-  console.log(`Приложени запушен на порте ${PORT}`);
+  console.log(`Приложение запушен на порте ${PORT}`);
 });
