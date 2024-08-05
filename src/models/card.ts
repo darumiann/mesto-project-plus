@@ -1,10 +1,12 @@
 import { model, Schema } from "mongoose";
+import { ObjectId } from "mongoose";
+import validator from "validator";
 
-interface ICard {
+export interface ICard {
   name: string;
   link: string;
-  owner: Schema.Types.ObjectId;
-  likes: [Schema.Types.ObjectId];
+  owner: ObjectId;
+  likes: ObjectId[];
   createdAt: Date;
 }
 
@@ -18,6 +20,10 @@ const cardSchema = new Schema<ICard>({
   link: {
     type: String,
     required: true,
+    validate: {
+      validator: (url: string) => validator.isURL(url),
+      message: "Неправильный формат ссылки"
+    },
   },
   owner: {
     type: Schema.Types.ObjectId,
