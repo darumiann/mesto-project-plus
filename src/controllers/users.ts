@@ -22,12 +22,11 @@ const getUserHandler = (id: string) => (req: Request, res: Response, next: NextF
     })
     .catch((err) => {
       if (err.name === 'CastError') {
-        res.send(err);
-        next(new CustomError(STATUS_BAD_REQUEST, INVALID_DATA_MESSAGE));
+        return next(new CustomError(STATUS_BAD_REQUEST, INVALID_DATA_MESSAGE));
       } else if (err.name === 'DocumentNotFoundError') {
-        next(new CustomError(STATUS_BAD_REQUEST, USER_NOT_FOUND_MESSAGE));
+        return next(new CustomError(STATUS_BAD_REQUEST, USER_NOT_FOUND_MESSAGE));
       }
-      next(err);
+      return next(err);
     });
 
 export const getUser = (req: IUserRequest, res: Response, next: NextFunction) => {
@@ -45,15 +44,16 @@ export const createUser = ( req: Request, res: Response, next: NextFunction ) =>
   return bcrypt.hash(password, 10)
     .then((hash: string) => User.create({ name, about, avatar, email, password: hash })
       .then((user) => {
-        res.status(STATUS_SUCCESS).send({ user });
+        const { password, ...userWithoutPassword } = user.toObject();
+        res.status(STATUS_SUCCESS).send({ user: userWithoutPassword });
       })
       .catch((err) => {
         if (err.name === 'ValidationError') {
-          next(new CustomError(STATUS_BAD_REQUEST, VALIDATION_ERROR_MESSAGE));
+          return next(new CustomError(STATUS_BAD_REQUEST, VALIDATION_ERROR_MESSAGE));
         } else if (err.code === 11000) {
-          next(new CustomError(STATUS_USER_EXISTS, USER_EXISTS_MESSAGE));
+          return next(new CustomError(STATUS_USER_EXISTS, USER_EXISTS_MESSAGE));
         }
-        next(err);
+        return next(err);
       }));
 };
 
@@ -72,11 +72,11 @@ export const updateUser = ( req: IUserRequest, res: Response, next: NextFunction
     )
     .catch((err) => {
       if (err.name === "CastError" || err.name === "ValidationError") {
-        next(new CustomError(STATUS_BAD_REQUEST, VALIDATION_ERROR_MESSAGE));
+        return next(new CustomError(STATUS_BAD_REQUEST, VALIDATION_ERROR_MESSAGE));
       } else if (err.name === "DocumentNotFoundError") {
-        next(new CustomError(STATUS_NOT_FOUND, USER_NOT_FOUND_MESSAGE));
+        return next(new CustomError(STATUS_NOT_FOUND, USER_NOT_FOUND_MESSAGE));
       }
-      next(err);
+      return next(err);
     });
   };
 
@@ -99,11 +99,11 @@ export const updateUserAvatar = ( req: IUserRequest, res: Response, next: NextFu
     )
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
-        next(new CustomError(STATUS_BAD_REQUEST, INVALID_DATA_MESSAGE));
+        return next(new CustomError(STATUS_BAD_REQUEST, INVALID_DATA_MESSAGE));
       } else if (err.name === "DocumentNotFoundError") {
-        next(new CustomError(STATUS_NOT_FOUND, SERVER_ERROR_MESSAGE));
+        return next(new CustomError(STATUS_NOT_FOUND, SERVER_ERROR_MESSAGE));
       }
-      next(err);
+      return next(err);
     });
 };
 
@@ -117,8 +117,8 @@ export const login = (req: Request, res: Response, next: NextFunction) => {
     })
     .catch((err: Error) => {
       if (err.name === "ValidationError") {
-        next(new CustomError(STATUS_BAD_REQUEST, WRONG_EMAIL_PASSWORD_MESSAGE));
+        return next(new CustomError(STATUS_BAD_REQUEST, WRONG_EMAIL_PASSWORD_MESSAGE));
       }
-      next(err);
+      return next(err);
     });
 };

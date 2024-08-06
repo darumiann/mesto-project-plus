@@ -6,6 +6,7 @@ import { ObjectId } from "mongoose";
 import { JwtPayload } from "jsonwebtoken";
 import { DEFAULT_USER_NAME, DEFAULT_ABOUT_VALUE, DEFAULT_AVATAR_LINK, AUTHORIZATION_NEEDED_MESSAGE, STATUS_UNAUTHORIZED } from "../utils/consts";
 import { stat } from "fs";
+import CustomError from "../errors/customError";
 
 interface IUser {
   name: string;
@@ -60,11 +61,11 @@ const userSchema = new Schema<IUser, UserModel>({
 userSchema.static("findUserByCredentials", function findUserByCredentials(email: string, password: string) {
   return this.findOne({ email }).select("+password").then((user) => {
     if (!user) {
-      throw { message: AUTHORIZATION_NEEDED_MESSAGE, status: STATUS_UNAUTHORIZED };
+      throw (new CustomError(STATUS_UNAUTHORIZED, AUTHORIZATION_NEEDED_MESSAGE));
     }
     return bcrypt.compare(password, user.password).then((matched) => {
       if (!matched) {
-        throw { message: AUTHORIZATION_NEEDED_MESSAGE, status: STATUS_UNAUTHORIZED };
+        throw (new CustomError(STATUS_UNAUTHORIZED, AUTHORIZATION_NEEDED_MESSAGE));
       }
       return user;
     });

@@ -85,5 +85,7 @@ export const removeCardLike = ( req: IUserRequest, res: Response, next: NextFunc
       next(new CustomError(STATUS_BAD_REQUEST, INVALID_DATA_MESSAGE));
     } else if (err.name === 'DocumentNotFoundError') {
       next(new CustomError(STATUS_BAD_REQUEST, CARDS_NOT_FOUND_MESSAGE))
+    } else {
+      next(err);
     }
   });

@@ -36,8 +36,9 @@ app.all('*', (req, res, next) => {
    next(new CustomError(STATUS_NOT_FOUND, ROUTER_NOT_FOUND_MESSAGE))
 });
 
-app.use(errors());
+
 app.use(errorLogger);
+app.use(errors());
 app.use(errorHandler);
 
 app.listen(PORT, () => {
