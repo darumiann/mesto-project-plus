@@ -1,28 +1,75 @@
 import { model, Schema } from "mongoose";
+import mongoose from "mongoose";
+import validator from "validator";
+import bcrypt from 'bcryptjs';
+import { ObjectId } from "mongoose";
+import { JwtPayload } from "jsonwebtoken";
+import { DEFAULT_USER_NAME, DEFAULT_ABOUT_VALUE, DEFAULT_AVATAR_LINK, AUTHORIZATION_NEEDED_MESSAGE, STATUS_UNAUTHORIZED } from "../utils/consts";
+import { stat } from "fs";
+import CustomError from "../errors/customError";
 
 interface IUser {
   name: string;
   about: string;
   avatar: string;
+  email: string;
+  password: string;
 }
 
-const userSchema = new Schema<IUser>({
+interface UserModel extends mongoose.Model<IUser> {
+  findUserByCredentials: (email: string, password: string) =>
+    Promise<mongoose.Document<unknown, any, IUser>>;
+};
+
+const userSchema = new Schema<IUser, UserModel>({
   name: {
     type: String,
     minlength: 2,
     maxlength: 30,
-    required: true,
+    default: DEFAULT_USER_NAME,
   },
   about: {
     type: String,
     minlength: 2,
     maxlength: 200,
-    required: true,
+    default: DEFAULT_ABOUT_VALUE
   },
   avatar: {
     type: String,
+    default: DEFAULT_AVATAR_LINK,
+    validate: {
+      validator: (url: string) => validator.isURL(url),
+      message: "Неправильный формат ссылки",
+    },
+  },
+  email: {
+    type: String,
+    unique: true,
     required: true,
+    validate: {
+      validator: (email: string) => validator.isEmail(email),
+      message: "Неправильный формат почты",
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false,
   },
 });
 
-export default model<IUser>("User", userSchema);
+userSchema.static("findUserByCredentials", function findUserByCredentials(email: string, password: string) {
+  return this.findOne({ email }).select("+password").then((user) => {
+    if (!user) {
+      throw (new CustomError(STATUS_UNAUTHORIZED, AUTHORIZATION_NEEDED_MESSAGE));
+    }
+    return bcrypt.compare(password, user.password).then((matched) => {
+      if (!matched) {
+        throw (new CustomError(STATUS_UNAUTHORIZED, AUTHORIZATION_NEEDED_MESSAGE));
+      }
+      return user;
+    });
+  });
+});
+
+export default model<IUser, UserModel>("User", userSchema);
